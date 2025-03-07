@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPS Status</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style type="text/css">
+    p { margin: 0; padding: 0; }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>UPS Information:</h1>
+        <p id="ups_info"></p><button onclick="document.getElementById('ups_info').innerHTML='Loading...';sendCommand('I');">Refresh</button>
+    </div>
+
+    <div>
+        <h2>Status:</h2>
+        <table>
+        <tr>
+        <td><p><b>State</b></p></td><td><span id="ups_state"></span></td>
+        </tr><tr>
+        <td><p><b>Vin</b></p></td><td><span id="ups_vin"></span> <span>V</span></td>
+        </tr><tr>
+        <td><p><b>Vout</b></p></td><td><span id="ups_vout"></span ><span>V</span></td>
+        </tr><tr>
+        <td><p><b>Freq</b></p></td><td><span id="ups_freq"></span> <span>Hz</span></td>
+        </tr><tr>
+        <td><p><b>Vbatt</b></p></td><td><span id="ups_vbatt"></span> <span>V</span></td>
+        </tr><tr>
+        <td><p><b>Load</b></p></td><td><span id="ups_load"></span> <span>%</span></td>
+        </tr><tr>
+        <td><p><b>Charge Power</b></p></td><td><span id="ups_chgpwr"></span> <span>W</span></td>
+        </tr><tr>
+        <td><p><b>"J"</b></p></td><td><span id="ups_j"></span></td>
+        </tr>
+        </table>
+    </div>
+    
+    <div>
+        <h3>Commands:</h3>
+        <table>
+        <tr><td><span>Output Power</span></td><td>
+        <button onclick="sendCommand('D')">Toggle Grid Bypass (D)</button>
+        <button onclick="sendCommand('R')">Reset (R)</button>
+        <button onclick="sendCommand('O')">Power on (O)</button>
+        <button onclick="sendCommand('S')">Shutdown (S)</button>
+        </td></tr><tr><td><span>Charge Current</span></td><td>
+        <button onclick="sendCommand('E')">- (E)</button>
+        <button onclick="sendCommand('W')">+ (W)</button>
+        <button onclick="sendCommand('G')">Get (G)</button>
+        </td></tr><tr><td><span>Battery</span></td><td>
+        <button onclick="sendCommand('C')">Battery Info (C)</button>
+        <button onclick="sendCommand('X')">Set Batt Type (X)</button>
+        <button onclick="sendCommand('B')">Set Load Prio (B)</button>
+        </td></tr><tr><td><span>Test</span></td><td>
+        <button onclick="sendCommand('U')">3s (U)</button>
+        <button onclick="sendCommand('N')">5s (N)</button>
+        <button onclick="sendCommand('T')">60s (T)</button>
+        </td></tr><tr><td><span>Unknown Toggles</span></td><td>
+        <button onclick="sendCommand('A')">Toggle (A)</button> (affects state)<br />
+        <button onclick="sendCommand('H')">Toggle (H)</button> (affects C)<br />
+        </td></tr><tr><td><span>Charger Power</span></td><td>
+        <button onclick="sendCommand('V')">Status (V)</button>
+        </td></tr><tr><td><span>Unknown Stat</span></td><td>
+        <button onclick="sendCommand('J')">J</button>
+        </td></tr><tr><td><span>Unknown variable (0-229)</span></td><td>
+        <button onclick="sendCommand('F')">+</button>
+        <button onclick="sendCommand('Q')">-</button>
+        </td></tr>
+        </table>
+    </div>
+
+    <div>
+        <h2>Last Response:</h2>
+        <p id="response">{{ response }}</p>
+    </div>
+    <hr>
+    <div>
+    <h3>LCD Setup Correlation</h3>
+<pre>
+991 (E-W) Charge current (G,L,P,[ REPORTS VALUE)
+992 (X) Battery type (affects C)
+993 (B) "load priority" (0 mains / 1 battery) (affects C)
+996 (Q-F) ?
+997 (H) (affects C)
+</pre>
+    </div>
+
+
+    <script>
+        // Function to send command to the server and update status and inverter info dynamically
+        function sendCommand(command) {
+            if (command != 'I') {
+                $('#response').text("Loading...");
+            }
+            $.get(`/cmnd/${command}`, function(data) {
+                // Update the status and inverter info on the page
+                $('#response').text(data);
+            });
+        }
+        // Function to periodically fetch 'y' and 'i' data
+        function fetchStatus() {
+            setInterval(function() {
+                $.get('/status', function(data) {
+                    // Update the status and inverter info on the page
+                    $('#ups_info').text(data.ups_info);
+                    $('#ups_state').text(data.ups_state);
+                    $('#ups_vin').text(data.ups_vin);
+                    $('#ups_vout').text(data.ups_vout);
+                    $('#ups_vbatt').text(data.ups_vbatt);
+                    $('#ups_load').text(data.ups_load);
+                    $('#ups_freq').text(data.ups_freq);
+                    $('#ups_chgpwr').text(data.ups_chgpwr);
+                    $('#ups_j').text(data.ups_j);
+                });
+            }, 2000);  // Fetch every 1 second for 'y' and 'i' updates
+        }
+
+        // Initialize the continuous updates when the page loads
+        $(document).ready(function() {
+            fetchStatus();
+        });
+    </script>
+</body>
+</html>
