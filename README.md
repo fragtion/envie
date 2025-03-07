@@ -4,7 +4,12 @@ I reverse engineered the protocol to communicate with the UPS and made this web-
 
 It's not perfect, there are some commands I haven't worked out yet... but it may be useful to you and save you some time...
 
-Contact me if you have any questions
+### About the UPS
+
+The UPS manufactured by chinese company SC POWER (https://scpower.cn/index.html)
+This model is the same or similar to their "DOCTOR" (https://scpower.cn/html/e1kva10kva.html)
+
+Contributions / Pull requests welcome
 
 ### DISCLAIMER:
 
