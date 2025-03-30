@@ -13,6 +13,8 @@ Contributions / Pull requests welcome
 
 ### DISCLAIMER:
 
+Caution: be very careful adjusting the charge current. It seems the charger amperage is capable of being pushed beyond design constraints which can cause damage to components on the power board, or the transformer. It's suggested to check all existing values before making upwards/downwards adjustments, and that any adjustments are done slowly, incrementally and with great caution. I can not be held responsible for any damages you wind up doing to your own equipment as a result of proceeding to use this code.
+
 This project is still experimental, so reliability cannot be guaranteed, especially in production environments. Proceed and/or use entirely at your own risk.
 
 ### Donate
